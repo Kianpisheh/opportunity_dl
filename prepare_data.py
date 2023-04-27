@@ -132,7 +132,7 @@ def get_object_usage_feature_vector(data_samples):
                 continue
             segments_featurs.append(features)
 
-        all_segments_featurs.append(segments_featurs)
+        all_segments_featurs.append(np.array(segments_featurs))
 
 
     return all_segments_featurs
