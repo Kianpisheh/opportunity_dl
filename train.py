@@ -1,17 +1,24 @@
+import numpy as np
 import torch
 
 def train(dataloader, model, loss_fn, optimizer):
 
 
-    size = len(dataloader.dataset)
+    N = len(dataloader.dataset)
     model.train()
+    avg_loss = 0
+    confusion_matrix = np.zeros((4,4)) # row: predicted, col: actual
+
+
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to("cuda", dtype=torch.float), y.to("cuda", dtype=torch.float)
+
+        y = int(y)-102 # match labels
 
         # Compute prediction error
         pred = model(X)
         y_onehot = torch.zeros(1, 4).to("cuda")
-        y_onehot[0,int(y)-102] = 1.
+        y_onehot[0,y] = 1.
         loss = loss_fn(pred, y_onehot)
 
         # Backpropagation
@@ -19,12 +26,24 @@ def train(dataloader, model, loss_fn, optimizer):
         loss.backward()
         optimizer.step()
 
+        avg_loss += loss.item()
         loss_val, current = loss.item(), (batch + 1) * len(X)
-        if batch % 10 == 0:
-            print(f"pred: {pred.tolist()}, label: {y}")
-            print(f"loss: {loss_val:>7f}  [{current:>5d}/{size:>5d}]")
+        # if batch % 10 == 0:
+        #     print(f"pred: {pred.tolist()}, label: {y}")
+        #     print(f"loss: {loss_val:>7f}  [{current:>5d}/{size:>5d}]")
 
 
+        # performance
+        y_pred = int(pred.argmax().item())
+        if y == y_pred:
+            confusion_matrix[y,y] += 1
+        else:
+            confusion_matrix[y_pred, y] += 1
+            
+        
+
+
+    return (avg_loss / N), confusion_matrix
 
 
 

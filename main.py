@@ -10,6 +10,7 @@ from train import train
 from MyDataset import MyDataset
 
 data_path = "../data/OpportunityUCIDataset/dataset"
+torch.manual_seed(2)
 
 # data prepration and feature extraction
 activity_samples = prepare_opportunity_objects_acc(data_path)
@@ -27,30 +28,23 @@ loss_fn = nn.CrossEntropyLoss()
 
 # optimizer
 # optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+optimizer = torch.optim.Adam(model.parameters(), lr=9e-3)
 
 
 # training
 model.train(True)
 
 
-EPOCHS = 50
+EPOCHS = 150
 
 for epoch in range(EPOCHS):
     print('EPOCH {}:'.format(epoch + 1))
 
     # Make sure gradient tracking is on, and do a pass over the data
     model.train(True)
-    avg_loss = train(data_loader, model, loss_fn, optimizer)
-
-
-    # running_vloss = 0.0
-    # for i, vdata in enumerate(validation_loader):
-    #     vinputs, vlabels = vdata
-    #     voutputs = model(vinputs)
-    #     vloss = loss_fn(voutputs, vlabels)
-    #     running_vloss += vloss
-
-    print('LOSS train {}'.format(avg_loss))
+    avg_loss, confusion_matrix = train(data_loader, model, loss_fn, optimizer)
+    print(f"Confusion:\n {confusion_matrix}")
+    print("--------------------------")
+    print('Loss: {}'.format(avg_loss))
 
 

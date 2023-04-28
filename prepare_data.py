@@ -122,7 +122,7 @@ def get_object_usage_feature_vector(data_samples):
     all_segments_featurs = []
     for i, sample in enumerate(data_samples):
         # segmentation
-        segments = get_segments(sample, 15000, 0.2)
+        segments = get_segments(sample, 12000, 0.2)
 
         # feature extraction (usage percentage)
         segments_featurs = []
