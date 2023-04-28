@@ -32,7 +32,7 @@ def prepare_opportunity_objects_acc(path, milli_g=False):
         desired_sensor_data = sensor_data.iloc[:, columns_idxs]
 
         if not milli_g:
-            desired_sensor_data.iloc[:,1:-1] = desired_sensor_data.iloc[:,1:-1]/1000
+            desired_sensor_data.loc[:,desired_sensor_data.columns[1:-1]] = desired_sensor_data.loc[:,desired_sensor_data.columns[1:-1]]/1000
 
         desired_sensor_data = fill_nan(desired_sensor_data)
         desired_sensor_data = desired_sensor_data[~np.isnan(desired_sensor_data).any(axis=1)]
